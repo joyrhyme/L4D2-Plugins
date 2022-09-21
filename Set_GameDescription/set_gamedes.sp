@@ -17,7 +17,7 @@ public Plugin myinfo =
 	author = "yuzumi",
 	version	= "1.0.1",
 	description	= "Change Description at any time!",
-	url = "https://github.com/joyrhyme"
+	url = "https://github.com/joyrhyme/L4D2-Plugins/tree/main/Set_GameDescription"
 };
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
