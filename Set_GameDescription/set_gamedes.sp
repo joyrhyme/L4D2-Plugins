@@ -26,7 +26,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	if(iEngineVersion != Engine_Left4Dead2 && !IsDedicatedServer())
 	{
 		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2 and Dedicated Server!");
-		return APLRes_Failure;
+		return APLRes_SilentFailure;
 	}
 	return APLRes_Success;
 }
