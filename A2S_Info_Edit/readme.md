@@ -2,12 +2,12 @@
 #### 自定义服务器 A2S INFO 的输出内容 (游戏描述, 服务器最大人数上限(假人数), 地图名称)
 ---
 * 所需平台
-    - Sourcemod 1.11+
+    * Sourcemod 1.11+
 * 依赖组件
-    - [SourceScramble](https://github.com/nosoop/SMExt-SourceScramble/releases)
-    - [left4dhooks](https://forums.alliedmods.net/showthread.php?t=321696)
-    - [l4d2_source_keyvalues](https://github.com/fdxx/l4d2_source_keyvalues)
-    - [localizer](https://github.com/dragokas/SM-Localizer)
+    * [SourceScramble](https://github.com/nosoop/SMExt-SourceScramble/releases)
+    * [left4dhooks](https://forums.alliedmods.net/showthread.php?t=321696)
+    * [l4d2_source_keyvalues](https://github.com/fdxx/l4d2_source_keyvalues)
+    * [localizer](https://github.com/dragokas/SM-Localizer)
 ---
 * 插件指令
     * a2s_info_mapname_type - **地图名称显示的类型**
