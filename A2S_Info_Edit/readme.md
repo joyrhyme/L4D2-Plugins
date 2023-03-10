@@ -50,6 +50,11 @@
         * notInFinale - **未进入救援流程时的文本**
     * 修改好后请 **a2s_edit_reload** 重新加载配置文件
 ---
+* 感谢
+    * [lakwsh](https://github.com/lakwsh) - 给予签名和偏移的帮助
+    * [fdxx](https://github.com/fdxx) - 此插件的部分代码来源
+    * [umlka](https://github.com/umlka) - 此插件的部分代码来源
+---
 * 注意事项
     * 此插件暂不支持在Windows的平台下使用!!
     * 此插件不支持监听和本地服务器!!
