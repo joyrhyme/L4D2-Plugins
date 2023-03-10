@@ -8,6 +8,12 @@
     * [left4dhooks](https://forums.alliedmods.net/showthread.php?t=321696)
     * [l4d2_source_keyvalues](https://github.com/fdxx/l4d2_source_keyvalues)
     * [localizer](https://github.com/dragokas/SM-Localizer)
+    * <details><summary>l4dtoolz (下面的选一个安装就行)</summary>
+    
+        * [Accelerator74 版本](https://github.com/accelerator74/l4dtoolz/releases)
+        * [lakwsh 版本](https://github.com/lakwsh/l4dtoolz/releases)
+            
+    </details>
 ---
 * 插件指令
     * a2s_info_mapname_type - **地图名称显示的类型 (默认4, 为显示任务+章节+救援进度)**
