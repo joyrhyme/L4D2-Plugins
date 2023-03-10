@@ -18,7 +18,7 @@
 
 #define PLUGIN_NAME				"A2S_INFO Edit | A2S_INFO 信息修改"
 #define PLUGIN_AUTHOR			"yuzumi"
-#define PLUGIN_VERSION			"1.0.9"
+#define PLUGIN_VERSION			"1.1.0"
 #define PLUGIN_DESCRIPTION		"DIY Server A2S_INFO Information | 定义自己服务器的A2S_INFO信息"
 #define PLUGIN_URL				"https://github.com/joyrhyme/L4D2-Plugins/A2S_Info_Edit"
 #define CVAR_FLAGS				FCVAR_NOTIFY
@@ -42,8 +42,7 @@ Localizer
 MemoryPatch
 	g_mMapNamePatch,
 	g_mGameDesPatch,
-	g_mBypassSteamPatch,
-	g_mMaxPlayer;
+	g_mBypassSteamPatch;
 
 // SDKCall地址
 Address
@@ -56,28 +55,27 @@ Handle
 	g_hSDK_GetAllMissions;
 
 // 记录内存补丁状态
+/*
 bool
-	g_bIsFinalMap,
 	g_bMapNamePatchEnable,
 	g_bGameDesPatchEnable,
-	g_bBypassSteamEnable,
-	g_bMaxPlayerPatchEnable;
-
+	g_bBypassSteamEnable;
+*/
 // 各初始化状态
 bool
 	g_bLocInit,
+	g_bIsFinalMap,
 	g_bMissionCached,
 	g_bFinaleStarted,
-	g_bInstallToolz,
+	g_bisAllBotGame,
 	g_bisLakwshVersion = true;
 
 // ConVars
 ConVar
-	g_hMaxPlayer,
 	g_hMPGameMode,
 	g_hMapNameLang,
 	g_hMapNameType,
-	g_hL4dToolzMaxPlayer;
+	g_hAllBotGame;
 
 // 存放修改后地图名称/游戏描述/模式名的变量
 char
@@ -93,12 +91,9 @@ char
 
 // 存放数值的变量
 int
-	g_iMaxPlayerOS,
 	g_iGameDesOS,
-	g_iToolzMaxPlayer,
 	g_iChapterNum,
 	g_iChapterMaxNum,
-	g_iMaxPlayer,
 	g_iBypassSteamCount,
 	g_iMapNameType;
 
@@ -143,29 +138,22 @@ public void OnPluginStart() {
 	// 创建Cvars
 	g_hMapNameType = CreateConVar("a2s_info_mapname_type", "4", "A2S_INFO MapName DisplayType. 1.Mission, 2.Mission&Chapter, 3.Mission&FinaleType, 4.Mission&Chapter&FinaleType, 5.Mission&[ChapterNum|MaxChapter]", CVAR_FLAGS, true, 1.0, true, 5.0);
 	g_hMapNameLang = CreateConVar("a2s_info_mapname_language", "chi", "What language is used in the generated PhraseFile to replace the TranslatedText of en? (Please Delete All A2S_Edit PhraseFile After Change This Cvar to Regenerate)", CVAR_FLAGS);
+	
 	g_hMPGameMode = FindConVar("mp_gamemode");
-	g_hL4dToolzMaxPlayer = FindConVar("sv_maxplayers");
-	if (g_hL4dToolzMaxPlayer) {
-		g_hMaxPlayer = CreateConVar("a2s_info_maxplayer", "-1", "A2S_INFO MaxPlayer, -1 is Disable.", CVAR_FLAGS, true, -1.0, true, 255.0); //一个字节(FF)为255,所以最大值为255
-		g_iToolzMaxPlayer = g_hL4dToolzMaxPlayer.IntValue;
-		g_bInstallToolz = true;
-	} else {
-		LogError("Failed to find ConVar: \"sv_maxplayers\", Please Install L4DToolz Extension! A2S_INFO MaxPlayer Patch and Modify been Disabled!");
-	}
+	g_hAllBotGame = FindConVar("sb_all_bot_game");
+	if (g_hAllBotGame.IntValue == 1)
+		g_bisAllBotGame = true;
+	else
+		g_hAllBotGame.IntValue = 1;
 
 	// 初始化Cvars
 	GetCvars_Mode();
 	GetCvars_Lang();
-	GetCvars_MaxPlayer();
 	GetCvars();
 	
 	//g_hMapNameLang.AddChangeHook(None); //此参数不需要关注变更,因为变更后需要删除翻译文件且重启服务器重新生成.
 	g_hMPGameMode.AddChangeHook(ConVarChanged_Mode);
 	g_hMapNameType.AddChangeHook(ConVarChanged_Cvars);
-	if(g_bInstallToolz) {
-		g_hMaxPlayer.AddChangeHook(ConVarChanged_MaxPlayer);
-		g_hL4dToolzMaxPlayer.AddChangeHook(ConVarChanged_MaxPlayer);
-	}
 
 	/*	事件相关
 		地图名字只需要在地图有变更时进行变更,所以暂时绑MapStart和MapEnd
@@ -192,10 +180,6 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "A2S_Edit");
 }
 
-void ConVarChanged_MaxPlayer(ConVar convar, const char[] oldValue, const char[] newValue) {
-	GetCvars_MaxPlayer();
-}
-
 void ConVarChanged_Mode(ConVar convar, const char[] oldValue, const char[] newValue) {
 	GetCvars_Mode();
 }
@@ -216,30 +200,6 @@ void GetCvars_Lang() {
 	}
 }
 
-void GetCvars_MaxPlayer() {
-	if (g_bInstallToolz) {
-		if (g_bMaxPlayerPatchEnable) {
-			if ((g_iMaxPlayer = g_hMaxPlayer.IntValue) == -1) {
-				g_mMaxPlayer.Disable();
-				PrintToServer("[A2S_Edit] Disable patch: \"CMaster::RebuildInfo_MaxPlayer\"");
-				g_bMaxPlayerPatchEnable = false;
-			} else {
-				g_iMaxPlayer = g_hMaxPlayer.IntValue < g_iToolzMaxPlayer ? g_iToolzMaxPlayer : g_hMaxPlayer.IntValue;
-				StoreToAddress(g_mMaxPlayer.Address + view_as<Address>(g_iMaxPlayerOS), view_as<int>(g_iMaxPlayer), NumberType_Int32);
-			}
-		} else {
-			if ((g_iMaxPlayer = g_hMaxPlayer.IntValue) != -1) {
-				g_iMaxPlayer = g_hMaxPlayer.IntValue < g_iToolzMaxPlayer ? g_iToolzMaxPlayer : g_hMaxPlayer.IntValue;
-				if (g_mMaxPlayer.Enable()) {
-					PrintToServer("[A2S_Edit] Enable patch: \"CMaster::RebuildInfo_MaxPlayer\"");
-					StoreToAddress(g_mMaxPlayer.Address + view_as<Address>(g_iMaxPlayerOS), view_as<int>(g_iMaxPlayer), NumberType_Int32);
-					g_bMaxPlayerPatchEnable = true;
-				}
-			}
-		}
-	}
-}
-
 void GetCvars() {
 	g_iMapNameType = g_hMapNameType.IntValue;
 	if (g_bLocInit && g_bMissionCached) {
@@ -251,9 +211,8 @@ void GetCvars() {
 public void OnConfigsExecuted() {
 	GetCvars();
 	GetCvars_Mode();
-	// 没进行过地图信息缓存时
+
 	if(!g_bMissionCached)
-		// 进行地图信息缓存
 		CacheMissionInfo();
 }
 
@@ -279,10 +238,8 @@ public void OnMapStart() {
 
 	// 如果都没初始化完(主要针对开服时)
 	if (!g_bLocInit || !g_bMissionCached) {
-		// 创建重复执行的计时器
 		CreateTimer(1.0, tChangeMapName, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 	} else {
-		// 更改地图显示名称
 		ChangeMapName();
 	}
 }
@@ -335,16 +292,13 @@ void Event_FinaleStart(Event hEvent, const char[] name, bool dontBroadcast) {
 		(因为此函数绑定多个救援事件(防止部分三方图的奇怪终局),防止重复触发)
 	*/
 	if (!g_bFinaleStarted) {
-		// 标记为true
 		g_bFinaleStarted = true;
-		// 更改地图显示名称
 		ChangeMapName();
 	}
 }
 
 // 关卡结束
 void Event_RoundEnd(Event hEvent, const char[] name, bool dontBroadcast) {
-	// 执行MapEnd的操作
 	OnMapEnd();
 	// 更改地图名称(针对在终局进行救援阶段时团灭后重置显示救援状态)
 	ChangeMapName();
@@ -358,7 +312,9 @@ Action tChangeMapName(Handle timer) {
 
 	// 本地化文本/Cvars/任务信息缓存都完成时
 	if (g_bLocInit && g_bMissionCached) {
-		ChangeMapName(); // 更改地图显示名
+		ChangeMapName();
+		if (!g_bisAllBotGame)
+			g_hAllBotGame.IntValue = 0;
 		return Plugin_Stop;
 	}
 	return Plugin_Continue;
@@ -517,10 +473,6 @@ void InitGameData() {
 	if (!hGameData)
 		SetFailState("[A2S_EDIT] Failed to load \"%s.txt\" gamedata.", GAMEDATA);
 
-	// 检查如果不是linux则关闭插件(插件暂时不支持windows,没做win的签名和内存修复)
-	if (!hGameData.GetOffset("OS"))
-		SetFailState("[A2S_EDIT] The plugin temporarily doesn't support l4d2 windows server!");
-
 	// 检查是否已经使用了lakwsh修补过的engine文件
 	g_pBypassSteam = hGameData.GetAddress("ProcessConnectionlessPacket");
 	if (!g_pBypassSteam)
@@ -561,7 +513,7 @@ void InitGameData() {
 		PrintToServer("[A2S_EDIT] Engine lib is lakwsh version, Skip patch!");
 	} else if (g_mBypassSteamPatch.Enable()) {
 		PrintToServer("[A2S_EDIT] Enabled patch: \"ProcessConnectionlessPacket_BypassSteam\"");
-		g_bBypassSteamEnable = true;
+		//g_bBypassSteamEnable = true;
 	}
 
 	// A2S_INFO 的地图名
@@ -571,20 +523,7 @@ void InitGameData() {
 	else if (g_mMapNamePatch.Enable()) {
 		StoreToAddress(g_mMapNamePatch.Address + view_as<Address>(1), view_as<int>(GetAddressOfString(g_cMapName)), NumberType_Int32);
 		PrintToServer("[A2S_EDIT] Enabled patch: \"RebuildInfo_MapName\"");
-		g_bMapNamePatchEnable = true;
-	}
-
-	// A2S_INFO 的最大玩家数
-	g_iMaxPlayerOS = hGameData.GetOffset("OS") ? 7 : 1;
-	g_mMaxPlayer = MemoryPatch.CreateFromConf(hGameData, "RebuildInfo_MaxPlayer");
-	if (!g_mMaxPlayer.Validate())
-		SetFailState("Failed to verify patch: \"RebuildInfo_MaxPlayer\"");
-	else if (g_bInstallToolz && g_iMaxPlayer != -1) {
-		if(g_mMaxPlayer.Enable()){
-			StoreToAddress(g_mMaxPlayer.Address + view_as<Address>(g_iMaxPlayerOS), view_as<int>(g_iMaxPlayer), NumberType_Int32);
-			PrintToServer("[A2S_EDIT] Enabled patch: \"RebuildInfo_MaxPlayer\"");
-			g_bMaxPlayerPatchEnable = true;
-		}
+		//g_bMapNamePatchEnable = true;
 	}
 
 	// A2S_INFO 的游戏描述
@@ -595,7 +534,7 @@ void InitGameData() {
 	else if (g_mGameDesPatch.Enable()) {
 		StoreToAddress(g_mGameDesPatch.Address + view_as<Address>(g_iGameDesOS), view_as<int>(GetAddressOfString(g_cGameDes)), NumberType_Int32);
 		PrintToServer("[A2S_EDIT] Enabled patch: \"GameDescription\"");
-		g_bGameDesPatchEnable = true;
+		//g_bGameDesPatchEnable = true;
 	}
 
 	delete hGameData;
@@ -614,7 +553,6 @@ bool InitKvFile() {
 	char kvPath[PLATFORM_MAX_PATH];
 	KeyValues kv;
 	File file;
-	// 文件位置
 	BuildPath(Path_SM, kvPath, sizeof(kvPath), "data/%s", A2S_SETTING);
 
 	// 文件不存在则创建
@@ -652,7 +590,6 @@ bool InitKvFile() {
 	kv.GetString("inFinale", g_cInFinale, sizeof(g_cInFinale), "救援正进行");
 	kv.GetString("notInFinale", g_cNotInFinale, sizeof(g_cNotInFinale), "救援未进行");
 
-	// 删除文件句柄
 	delete kv;
 	return true;
 }
@@ -676,7 +613,6 @@ void fmt_Translate(const char[] phrase, char[] buffer, int maxlength, int client
 
 // 进行地图信息本地化(官方图为多语言)
 void OnPhrasesReady() {
-	// 进行初始化
 	g_bLocInit = false;
 	PrintToServer("[A2S_Edit] Localizer Init...");
 
@@ -685,7 +621,6 @@ void OnPhrasesReady() {
 		g_profiler.Start();
 	#endif
 
-	// 初始化数组
 	esPhrase esp;
 	ArrayList al_missions = new ArrayList(sizeof esPhrase);
 	ArrayList al_chapters = new ArrayList(sizeof esPhrase);
@@ -719,7 +654,6 @@ void OnPhrasesReady() {
 			strcopy(esp.key, sizeof(esp.key), phrase);
 			strcopy(esp.val, sizeof(esp.val), !strcmp(translation, "N/A") ? phrase : translation);
 			esp.official = value;
-			// 把数据推入数组
 			al_missions.PushArray(esp);
 		}
 
@@ -751,21 +685,18 @@ void OnPhrasesReady() {
 	BuildPhrasePath(FilePath, sizeof(FilePath), TRANSLATION_CHAPTERS, "en");
 	BuildPhraseFile(FilePath, al_chapters, esp);
 
-	// 结束游戏本地化文本获取
 	loc.Close();
-	// 删除数组句柄
 	delete al_missions;
 	delete al_chapters;
 
 	value = 0;
 	// 把翻译内容写出文本(写入到en里,由于服务器自身使用文本为SM的Core.cfg里控制,默认这里使用上方Cvar里定义的翻译覆盖en)
 	BuildPhrasePath(FilePath, sizeof(FilePath), TRANSLATION_MISSIONS, "en");
-	// 文件存在就读取翻译文本
 	if (FileExists(FilePath)) {
 		value = 1;
 		LoadTranslations("a2s_missions.phrases");
 	}
-	// 文件存在就读取翻译文本
+
 	BuildPhrasePath(FilePath, sizeof(FilePath), TRANSLATION_CHAPTERS, "en");
 	if (FileExists(FilePath)) {
 		value = 1;
@@ -782,7 +713,6 @@ void OnPhrasesReady() {
 		LogError("Export Phrases Time: %f", g_profiler.Time);
 	#endif
 
-	// 结束初始化并标记初始化变量为true
 	g_bLocInit = true;
 	PrintToServer("[A2S_Edit] Localizer Init Complete...");
 }
@@ -861,7 +791,6 @@ void BuildPhraseFile(char[] FilePath, ArrayList array, esPhrase esp) {
 			kv.Rewind();
 		}
 	}
-	// 删除kv文件句柄
 	delete kv;
 }
 
