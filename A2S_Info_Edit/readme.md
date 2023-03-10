@@ -1,5 +1,5 @@
 # A2S_INFO 信息修改
-#### 自定义服务器 A2S INFO 的输出内容 (游戏描述, 服务器最大人数上限(假人数), 地图名称)
+#### 自定义服务器 A2S INFO 的输出内容 (游戏描述, 地图名称)
 ---
 * 效果图
   <br/>![image](Image.png)
@@ -10,12 +10,6 @@
     * [left4dhooks](https://forums.alliedmods.net/showthread.php?t=321696)
     * [l4d2_source_keyvalues](https://github.com/fdxx/l4d2_source_keyvalues)
     * [localizer](https://github.com/dragokas/SM-Localizer)
-    * <details><summary>l4dtoolz (下面的选一个安装就行)</summary>
-    
-        * [Accelerator74 版本](https://github.com/accelerator74/l4dtoolz/releases)
-        * [lakwsh 版本](https://github.com/lakwsh/l4dtoolz/releases)
-            
-    </details>
 ---
 * 插件指令
     * a2s_info_mapname_type - **地图名称显示的类型 (默认4, 为显示任务+章节+救援进度)**
@@ -38,7 +32,6 @@
         * 修改过此参数必须前往 **addons/sourcemod/translations** 下 **删除** 以下两个文件后重启服务器来生成翻译文件
             * a2s_chapters.phrases.txt
             * a2s_missions.phrases.txt
-    * a2s_info_maxplayer - **显示的最大人数(假人数), 需要安装L4dToolz才有效 (默认-1, 为不作修改)**
 ---
 * 插件命令
     * a2s_edit_reload -- **重新加载插件文本配置文件, 需要ROOT管理员权限**
@@ -56,6 +49,4 @@
     * [umlka](https://github.com/umlka) - 此插件的部分代码来源
 ---
 * 注意事项
-    * 此插件暂不支持在Windows的平台下使用!!
     * 此插件不支持监听和本地服务器!!
-    * 由于dragokas的Localizer生成官方本地化翻译需要服务器非休眠状态, 所以需要服务器把 **sb_all_bot_game 改为 1**.
