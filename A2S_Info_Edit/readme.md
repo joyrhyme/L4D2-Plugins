@@ -1,4 +1,4 @@
-# A2S_INFO Edit | A2S_INFO 信息修改
+# A2S_INFO 信息修改
 #### 自定义服务器 A2S INFO 的输出内容 (游戏描述, 服务器最大人数上限(假人数), 地图名称)
 ---
 * 所需平台
@@ -10,7 +10,7 @@
     * [localizer](https://github.com/dragokas/SM-Localizer)
 ---
 * 插件指令
-    * a2s_info_mapname_type - **地图名称显示的类型**
+    * a2s_info_mapname_type - **地图名称显示的类型 (默认4, 为显示任务+章节+救援进度)**
         * <details><summary>显示类型</summary>
 
             * 以官方图 C1M4 为例
@@ -18,29 +18,29 @@
                     * 死亡中心
                 * 2 - 显示任务+章节.
                     * 死亡中心 [4: 中厅]
-                * 3 - 显示任务+救援进度(非终局下为 类型1 显示).
+                * 3 - 显示任务+救援进度 (非终局下为 类型1 显示).
                     * 死亡中心 - 救援进行中 / 死亡中心 - 救援未进行
-                * 4 - 显示任务+章节+救援进度(非终局下为 类型2 显示)
+                * 4 - 显示任务+章节+救援进度 (非终局下为 类型2 显示)
                     * 死亡中心 [4: 中厅] - 救援进行中 / 死亡中心 [4: 中厅] - 救援未进行
                 * 5 - 显示任务+[当前章节/最大章节]
                     * 死亡中心 [4/4]
 
         </details>
-    * a2s_info_mapname_language - **官方地图的翻译文本使用何种官方本地化语言(默认chi, 简体中文)**
-        * 修改过此参数必须前往 SourceMod 的 translations 下删除以下两个文件后重启服务器来生成翻译文件
+    * a2s_info_mapname_language - **官方地图的翻译文本使用何种官方本地化语言 (默认chi, 为简体中文)**
+        * 修改过此参数必须前往 **addons/sourcemod/translations** 下 **删除** 以下两个文件后重启服务器来生成翻译文件
             * a2s_chapters.phrases.txt
             * a2s_missions.phrases.txt
-    * a2s_info_maxplayer - **显示的最大人数(假人数), 需要安装L4dToolz才有效**
+    * a2s_info_maxplayer - **显示的最大人数(假人数), 需要安装L4dToolz才有效 (默认-1, 为不作修改)**
 ---
 * 插件命令
     * a2s_edit_reload -- **重新加载插件文本配置文件, 需要ROOT管理员权限**
 ---
 * 插件配置文件
-    * 在 data 目录下的 a2s_info_edit.cfg .
+    * 在 **data** 目录下的 **a2s_info_edit.cfg** .
         * description - **游戏描述**
         * inFinale - **进入救援流程时的文本**
         * notInFinale - **未进入救援流程时的文本**
-    * 修改好后请 a2s_edit_reload 重新加载配置文件
+    * 修改好后请 **a2s_edit_reload** 重新加载配置文件
 ---
 * 注意事项
     * 此插件暂不支持在Windows的平台下使用!!
