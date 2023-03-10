@@ -16,7 +16,7 @@
 	{
 		"MemPatches"
 		{
-			"CMaster::RebuildInfo_MapName"
+			"RebuildInfo_MapName"
 			{
 				"signature"		"CMaster::RebuildInfo"
 
@@ -28,7 +28,7 @@
 				}
 			}
 
-			"CMaster::RebuildInfo_MaxPlayer"
+			"RebuildInfo_MaxPlayer"
 			{
 				"signature"		"CMaster::RebuildInfo"
 
@@ -41,7 +41,7 @@
 			}
 
 
-			"GetGameDescription::GameDescription"
+			"GameDescription"
 			{
 				"signature"		"GetGameDescription"
 
@@ -50,13 +50,42 @@
 					"offset"	"6h"
 					"verify"	"\xC7\x44\x24\x08"
 					"patch"		"\xC7\x44\x24\x08\x00\x00\x00\x00"
-					"preserve"	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
 				}
+			}
+
+			"ProcessConnectionlessPacket_BypassSteam"
+			{
+				"signature"		"CBaseServer::ProcessConnectionlessPacket"
+
+				"linux"
+				{
+					"offset"	"67Dh"
+
+					"verify"	"\x0F\x84\x3E\x05\x00\x00"
+					"patch"		"\x90\x90\x90\x90\x90\x90"
+				}
+			}
+		}
+
+		"Offsets"
+		{
+			"BypassSteam_Count"
+			{
+				"linux"			"6"
 			}
 		}
 
 		"Addresses"
 		{
+			"ProcessConnectionlessPacket"
+			{
+				"linux"
+				{
+					"signature"	"CBaseServer::ProcessConnectionlessPacket"
+					"offset"	"1661"
+				}
+			}
+
 			"CDirector"
 			{
 				"linux"
@@ -89,6 +118,13 @@
 
 		"Signatures"
 		{
+			/* CBaseServer::ProcessConnectionlessPacket(CBaseServer *, netadr_s *) */
+			"CBaseServer::ProcessConnectionlessPacket"
+			{
+				"library"	"engine"
+				"linux"		"@_ZN11CBaseServer27ProcessConnectionlessPacketEP11netpacket_s"
+			}
+
 			/* CMaster::RebuildInfo(CBaseServer *) */
 			"CMaster::RebuildInfo"
 			{
