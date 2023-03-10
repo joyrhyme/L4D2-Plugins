@@ -1,0 +1,131 @@
+"Games"
+{
+	"#default"
+	{
+		"Offsets"
+		{
+			"OS"
+			{
+				"linux"		"1"
+				"windows"	"0"
+			}
+		}
+	}
+
+	"left4dead2" 
+	{
+		"MemPatches"
+		{
+			"CMaster::RebuildInfo_MapName"
+			{
+				"signature"		"CMaster::RebuildInfo"
+
+				"linux"
+				{
+					"offset"	"8Ah"
+					"verify"	"\x8B\x06\x89\x34\x24\xFF\x50\x3C"
+					"patch"		"\xB8\x00\x00\x00\x00\x90\x90\x90"
+				}
+			}
+
+			"CMaster::RebuildInfo_MaxPlayer"
+			{
+				"signature"		"CMaster::RebuildInfo"
+
+				"linux"
+				{
+					"offset"	"128h"
+					"verify"	"\x8B\x85\xB0\xFE\xFF\xFF\x89\x1C\x24\x89\x44\x24\x04"
+					"patch"		"\x89\x1C\x24\xC7\x44\x24\x04\x00\x00\x00\x00\x90\x90"
+				}
+			}
+
+
+			"GetGameDescription::GameDescription"
+			{
+				"signature"		"GetGameDescription"
+
+				"linux"
+				{
+					"offset"	"6h"
+					"verify"	"\xC7\x44\x24\x08"
+					"patch"		"\xC7\x44\x24\x08\x00\x00\x00\x00"
+					"preserve"	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+				}
+			}
+		}
+
+		"Addresses"
+		{
+			"CDirector"
+			{
+				"linux"
+				{
+					"signature"	"TheDirector"
+				}
+				"windows"
+				{
+					"signature"	"CDirectorMusicBanks::OnRoundStart"
+					"read"		"12"
+				}
+				"read"	"0"
+			}
+
+			"g_pMatchExtL4D"
+			{
+				"linux"
+				{
+					"signature"	"CTerrorGameRules::GetMissionInfo"
+					"read"		"44"
+				}
+				"windows"
+				{
+					"signature"	"CTerrorGameRules::GetMissionInfo"
+					"read"		"42"
+				}
+				"read"	"0"
+			}
+		}
+
+		"Signatures"
+		{
+			/* CMaster::RebuildInfo(CBaseServer *) */
+			"CMaster::RebuildInfo"
+			{
+				"library"	"engine"
+				"linux"		"@_ZN7CMaster11RebuildInfoEP11CBaseServer"
+			}
+
+			/* GetGameDescription(void) */
+			"GetGameDescription"
+			{
+				"library"	"server"
+				"linux"		"@_Z18GetGameDescriptionv"
+			}
+
+			"TheDirector"
+			{
+				"library"	"server"
+				"linux"		"@TheDirector"
+			}
+
+			/* CDirectorMusicBanks::OnRoundStart(CDirectorMusicBanks *__hidden this) */
+			"CDirectorMusicBanks::OnRoundStart"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CDirectorMusicBanks12OnRoundStartEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x56\x57\x8B\x2A\x8B\x0D\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x84\x2A\x0F"
+				/* ? ? ? ? ? ? 56 57 8B ? 8B 0D ? ? ? ? E8 ? ? ? ? 84 ? 0F */
+			}
+
+			/* CTerrorGameRules::GetMissionInfo(CTerrorGameRules *__hidden this) */
+			"CTerrorGameRules::GetMissionInfo"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules14GetMissionInfoEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x56\xFF\x2A\x8B\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x75\x2A\x5E"
+				/* ? ? ? ? ? ? ? ? ? ? 8B ? 8B ? ? 56 FF ? 8B ? 8B ? 8B ? ? 6A ? FF ? 8B ? 85 ? 75 ? 5E */
+			}
+		}
+	}
+}
