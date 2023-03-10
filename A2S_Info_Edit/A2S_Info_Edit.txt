@@ -26,20 +26,14 @@
 					"verify"	"\x8B\x06\x89\x34\x24\xFF\x50\x3C"
 					"patch"		"\xB8\x00\x00\x00\x00\x90\x90\x90"
 				}
-			}
-
-			"RebuildInfo_MaxPlayer"
-			{
-				"signature"		"CMaster::RebuildInfo"
-
-				"linux"
+				
+				"windows"
 				{
-					"offset"	"128h"
-					"verify"	"\x8B\x85\xB0\xFE\xFF\xFF\x89\x1C\x24\x89\x44\x24\x04"
-					"patch"		"\x89\x1C\x24\xC7\x44\x24\x04\x00\x00\x00\x00\x90\x90"
+					"offset"	"6Bh"
+					"verify"	"\x8B\x07\x8B\x50\x38\x8B\xCF\xFF\xD2"
+					"patch"		"\xB8\x00\x00\x00\x00\x90\x90\x90\x90"
 				}
 			}
-
 
 			"GameDescription"
 			{
@@ -50,6 +44,13 @@
 					"offset"	"6h"
 					"verify"	"\xC7\x44\x24\x08"
 					"patch"		"\xC7\x44\x24\x08\x00\x00\x00\x00"
+				}
+				
+				"windows"
+				{
+					"offset"	"0h"
+					"verify"	"\x68"
+					"patch"		"\x68\x00\x00\x00\x00"
 				}
 			}
 
@@ -64,6 +65,14 @@
 					"verify"	"\x0F\x84\x3E\x05\x00\x00"
 					"patch"		"\x90\x90\x90\x90\x90\x90"
 				}
+
+				"windows"
+				{
+					"offset"	"EF2h"
+
+					"verify"	"\x74\x25"
+					"patch"		"\x90\x90"
+				}
 			}
 		}
 
@@ -72,6 +81,7 @@
 			"BypassSteam_Count"
 			{
 				"linux"			"6"
+				"windows"		"2"
 			}
 		}
 
@@ -83,6 +93,12 @@
 				{
 					"signature"	"CBaseServer::ProcessConnectionlessPacket"
 					"offset"	"1661"
+				}
+
+				"windows"
+				{
+					"signature"	"CBaseServer::ProcessConnectionlessPacket"
+					"offset"	"3826"
 				}
 			}
 
@@ -123,6 +139,8 @@
 			{
 				"library"	"engine"
 				"linux"		"@_ZN11CBaseServer27ProcessConnectionlessPacketEP11netpacket_s"
+				"windows"	"\x55\x8B\xEC\x81\xEC\x58\x0A\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x08"
+				/* 55 8B EC 81 EC 58 0A 00 00 A1 ? ? ? ? 33 C5 89 45 FC 8B 45 08 */
 			}
 
 			/* CMaster::RebuildInfo(CBaseServer *) */
@@ -130,6 +148,7 @@
 			{
 				"library"	"engine"
 				"linux"		"@_ZN7CMaster11RebuildInfoEP11CBaseServer"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\xF3\x0F\x10\x05\x2A\x2A\x2A\x2A\x56\x8B\xF1\x57\x8B\x7D\x08\x8D\x8E"
 			}
 
 			/* GetGameDescription(void) */
@@ -137,6 +156,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_Z18GetGameDescriptionv"
+				"windows"	"\x68\x2A\x2A\x2A\x2A\x68\x80\x00\x00\x00\x68\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x0C"
+				/* 68 ? ? ? ? 68 80 00 00 00 68 ? ? ? ? E8 ? ? ? ? 83 C4 0C */
 			}
 
 			"TheDirector"
