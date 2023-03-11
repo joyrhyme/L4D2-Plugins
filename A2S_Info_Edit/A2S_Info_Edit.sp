@@ -175,7 +175,7 @@ public void OnPluginStart() {
 	#endif
 
 	// 注册命令
-	RegAdminCmd("a2s_edit_reload", cmdReload, ADMFLAG_ROOT, "Reload A2S_EDIT Setting");
+	RegAdminCmd("sm_a2s_edit_reload", cmdReload, ADMFLAG_ROOT, "Reload A2S_EDIT Setting");
 
 	AutoExecConfig(true, "A2S_Edit");
 }
