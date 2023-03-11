@@ -132,8 +132,8 @@ public void OnPluginStart() {
 	g_smMissionMap = new StringMap();
 
 	// 初始化GameData和Kv文件
-	InitGameData();
 	InitKvFile();
+	InitGameData();
 
 	// 创建Cvars
 	g_hMapNameType = CreateConVar("a2s_info_mapname_type", "4", "A2S_INFO MapName DisplayType. 1.Mission, 2.Mission&Chapter, 3.Mission&FinaleType, 4.Mission&Chapter&FinaleType, 5.Mission&[ChapterNum|MaxChapter]", CVAR_FLAGS, true, 1.0, true, 5.0);
