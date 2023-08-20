@@ -229,18 +229,11 @@ Action cmdReload(int client, int args) {
 
 // 地图开始
 public void OnMapStart() {
-	// 是否为终局
-	g_bIsFinalMap = L4D_IsMissionFinalMap();
-	// 当前任务章节总数
-	g_iChapterMaxNum = L4D_GetMaxChapters();
-	// 当前章节号
-	g_iChapterNum = L4D_GetCurrentChapter();
-
-	// 如果都没初始化完(主要针对开服时)
-	if (!g_bLocInit || !g_bMissionCached) {
-		CreateTimer(1.0, tChangeMapName, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	// 兼容新版的L4DHOOKS的检测
+	if (GetFeatureStatus(FeatureType_Native, "Left4DHooks_Version") != FeatureStatus_Available || Left4DHooks_Version() < 1135 || !L4D_HasMapStarted()) {
+		RequestFrame(OnMapStartedPost);
 	} else {
-		ChangeMapName();
+		OnMapStartedPost();
 	}
 }
 
@@ -318,6 +311,23 @@ Action tChangeMapName(Handle timer) {
 		return Plugin_Stop;
 	}
 	return Plugin_Continue;
+}
+
+// 更改流程
+void OnMapStartedPost() {
+	// 是否为终局
+	g_bIsFinalMap = L4D_IsMissionFinalMap();
+	// 当前任务章节总数
+	g_iChapterMaxNum = L4D_GetMaxChapters();
+	// 当前章节号
+	g_iChapterNum = L4D_GetCurrentChapter();
+
+	// 如果都没初始化完(主要针对开服时)
+	if (!g_bLocInit || !g_bMissionCached) {
+		CreateTimer(1.0, tChangeMapName, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	} else {
+		ChangeMapName();
+	}
 }
 
 // 更改地图名
