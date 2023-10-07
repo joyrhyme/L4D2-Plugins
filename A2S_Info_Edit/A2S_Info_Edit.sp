@@ -20,7 +20,7 @@
 #define PLUGIN_AUTHOR			"yuzumi"
 #define PLUGIN_VERSION			"1.1.1"
 #define PLUGIN_DESCRIPTION		"DIY Server A2S_INFO Information | 定义自己服务器的A2S_INFO信息"
-#define PLUGIN_URL				"https://github.com/joyrhyme/L4D2-Plugins/A2S_Info_Edit"
+#define PLUGIN_URL				"https://github.com/joyrhyme/L4D2-Plugins/tree/main/A2S_Info_Edit"
 #define CVAR_FLAGS				FCVAR_NOTIFY
 
 #define DEBUG					0

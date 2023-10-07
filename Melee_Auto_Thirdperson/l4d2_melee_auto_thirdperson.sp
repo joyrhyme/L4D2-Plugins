@@ -6,7 +6,7 @@ public Plugin myinfo =
     author      = "yuzumi",
     description = "Switch to thirdperson when using melee weapons.",
     version     = "1.0.0",
-    url         = "https://github.com/joyrhyme/L4D2-Plugins/Melee_Auto_Thirdperson"
+    url         = "https://github.com/joyrhyme/L4D2-Plugins/tree/main/Melee_Auto_Thirdperson"
 }
 
 #pragma semicolon 1
