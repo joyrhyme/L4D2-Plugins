@@ -28,6 +28,14 @@
 				"return"		"void"
 				"this"			"ignore"
 			}
+
+			"TransitionRestore"
+			{
+				"signature"		"CTerrorPlayer::TransitionRestore"
+				"callconv"		"thiscall"
+				"return"		"int"
+				"this"			"entity"
+			}
 		}
 		
 		"Signatures"
@@ -70,6 +78,15 @@
 				"linux"		"@_ZNK9CDirector20IsFirstMapInScenarioEv"
 				"windows"	"\xA1\x2A\x2A\x2A\x2A\x8B\x40\x3C\x56\x8B\xF0"
 				/* A1 ? ? ? ? 8B 40 3C 56 8B F0 */
+			}
+
+			/* CTerrorPlayer::TransitionRestore(CTerrorPlayer *__hidden this) */
+			"CTerrorPlayer::TransitionRestore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer17TransitionRestoreEv"
+				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x80\xBE\x2A\x2A\x2A\x2A\x2A\x75\x2A\x33\x2A\x5E\x8B\x2A\x5D\xC3"
+				/* ? ? ? ? ? ? ? 80 BE ? ? ? ? ? 75 ? 33 ? 5E 8B ? 5D C3 */
 			}
 		}
 	}

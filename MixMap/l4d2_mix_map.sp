@@ -117,7 +117,7 @@ public void OnPluginStart() {
 
 	Init();
 
-	AutoExecConfig(.name = "l4d2_mix_map");
+	AutoExecConfig(true, "l4d2_mix_map");
 }
 
 // 插件结束
@@ -172,19 +172,16 @@ void Init() {
 void InitGameData() {
 	char buffer[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, buffer, sizeof buffer, "gamedata/%s.txt", FILE_NAME);
-	if (! FileExists(buffer)) {
+	if (! FileExists(buffer))
 		SetFailState("Missing required file: \"%s\".\n", buffer);
-	}
 
 	GameData hGameData = new GameData(FILE_NAME);
-	if (! hGameData) {
+	if (! hGameData)
 		SetFailState("Failed to load \"%s.txt\" gamedata", FILE_NAME);
-	}
 
 	g_pDirector = hGameData.GetAddress("CDirector");
-	if (g_pDirector == Address_Null) {
+	if (g_pDirector == Address_Null)
 		SetFailState("Failed to get CDirector address");
-	}
 
 	StartPrepSDKCall(SDKCall_Raw);
 	if (PrepSDKCall_SetFromConf(hGameData, SDKConf_Signature, "CDirector::IsFirstMapInScenario") == false)
@@ -195,13 +192,17 @@ void InitGameData() {
 		SetFailState("Failed to create SDKCall \"IsFirstMapInScenario\"");
 
 	DynamicDetour dRestoreTransitioned = DynamicDetour.FromConf(hGameData, "RestoreTransitionedEntities");
-	if (! dRestoreTransitioned) {
+	if (! dRestoreTransitioned)
 		SetFailState("Failed to setup detour for RestoreTransitionedEntities");
-	}
 
-	if (! dRestoreTransitioned.Enable(Hook_Pre, Detour_OnRestoreTransitionedEntities)) {
+	if (! dRestoreTransitioned.Enable(Hook_Pre, Detour_OnRestoreTransitionedEntities))
 		SetFailState("Failed to detour for RestoreTransitionedEntities");
-	}
+
+	DynamicDetour dTransitionRestore = DynamicDetour.FromConf(hGameData, "TransitionRestore");
+	if (! dTransitionRestore)
+		SetFailState("Failed to setup detour for TransitionRestore");
+	if (! dTransitionRestore.Enable(Hook_Post, Detour_CTerrorPlayer_TransitionRestore_Post))
+		SetFailState("Failed to detour post: \"TransitionRestore\"");
 
 	delete hGameData;
 }
@@ -214,6 +215,16 @@ MRESReturn Detour_OnRestoreTransitionedEntities() {
 		#endif
 		return MRES_Supercede;
 	}
+	return MRES_Ignored;
+}
+
+// 玩家过渡函数
+MRESReturn Detour_CTerrorPlayer_TransitionRestore_Post(int pThis, DHookReturn hReturn) {
+	if (! g_bEnable || GetClientTeam(pThis) > 2)
+		return MRES_Ignored;
+
+	// 传送玩家到起点(防止因过渡时安全屋大小不匹配而导致的传送到安全屋外)
+	CheatCommand(pThis, "warp_to_start_area");
 	return MRES_Ignored;
 }
 
@@ -258,7 +269,7 @@ void Event_RoundStart (Event event, const char[] name, bool dontBroadcast) {
 		LogMessage("RoundStart");
 		#endif
 		if (g_bEnable) {
-			CreateTimer(0.1, tmrWarp, _, TIMER_FLAG_NO_MAPCHANGE);
+			g_bFirstMap = IsFirstMapInScenario();
 			CreateTimer(1.0, TimerFindEntity, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
@@ -280,7 +291,7 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 		LogMessage("PlayerSpawn");
 		#endif
 		if (g_bEnable) {
-			CreateTimer(0.1, tmrWarp, _, TIMER_FLAG_NO_MAPCHANGE);
+			g_bFirstMap = IsFirstMapInScenario();
 			CreateTimer(1.0, TimerFindEntity, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
@@ -628,19 +639,6 @@ Action Command_Reload(int client, int args) {
 		CReplyToCommand(client, "%s 重新加载{olive} %d {default}个配置成功!", PREFIX, len);
 	}
 	return Plugin_Handled;
-}
-
-// 传送全部玩家到起点(防止因过渡时安全屋大小不匹配而导致的传送到安全屋外)
-Action tmrWarp(Handle timer) {
-	// 如果不是第一章才执行
-	if (! (g_bFirstMap = IsFirstMapInScenario())) {
-		for (int i = 1; i <= MaxClients; i++) {
-			if (IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i))
-				CheatCommand(i, "warp_to_start_area");
-		}
-	}
-
-	return Plugin_Continue;
 }
 
 void CheatCommand(int client, const char[] cmd) {
