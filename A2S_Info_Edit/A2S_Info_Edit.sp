@@ -400,7 +400,7 @@ void ChangeMapName() {
 // DEBUG用 输出Kv的全部内容
 stock void PrintAllKeyValues(SourceKeyValues root) {
 	char sName[128], sValue[256];
-	DataType type;
+	int type;
 
 	for (SourceKeyValues kv = root.GetFirstSubKey(); !kv.IsNull(); kv = kv.GetNextKey())
 	{
