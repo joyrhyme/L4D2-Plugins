@@ -18,20 +18,20 @@
 		{
 			"RebuildInfo_MapName"
 			{
-				"signature"		"CMaster::RebuildInfo"
+				"signature"		"SendUpdatedServerDetails"
 
 				"linux"
 				{
-					"offset"	"8Ah"
-					"verify"	"\x8B\x06\x89\x34\x24\xFF\x50\x3C"
-					"patch"		"\xB8\x00\x00\x00\x00\x90\x90\x90"
+					"offset"	"F6h"
+					"verify"	"\xC7\x44\x24\x04"
+					"patch"		"\xC7\x44\x24\x04\x00\x00\x00\x00"
 				}
 				
 				"windows"
 				{
-					"offset"	"6Bh"
-					"verify"	"\x8B\x07\x8B\x50\x38\x8B\xCF\xFF\xD2"
-					"patch"		"\xB8\x00\x00\x00\x00\x90\x90\x90\x90"
+					"offset"	"11Ah"
+					"verify"	"\x68"
+					"patch"		"\x68\x00\x00\x00\x00"
 				}
 			}
 
@@ -53,55 +53,10 @@
 					"patch"		"\x68\x00\x00\x00\x00"
 				}
 			}
-
-			"ProcessConnectionlessPacket_BypassSteam"
-			{
-				"signature"		"CBaseServer::ProcessConnectionlessPacket"
-
-				"linux"
-				{
-					"offset"	"67Dh"
-
-					"verify"	"\x0F\x84\x3E\x05\x00\x00"
-					"patch"		"\x90\x90\x90\x90\x90\x90"
-				}
-
-				"windows"
-				{
-					"offset"	"EF2h"
-
-					"verify"	"\x74\x25"
-					"patch"		"\x90\x90"
-				}
-			}
-		}
-
-		"Offsets"
-		{
-			"BypassSteam_Count"
-			{
-				"linux"			"6"
-				"windows"		"2"
-			}
 		}
 
 		"Addresses"
 		{
-			"ProcessConnectionlessPacket"
-			{
-				"linux"
-				{
-					"signature"	"CBaseServer::ProcessConnectionlessPacket"
-					"offset"	"1661"
-				}
-
-				"windows"
-				{
-					"signature"	"CBaseServer::ProcessConnectionlessPacket"
-					"offset"	"3826"
-				}
-			}
-
 			"CDirector"
 			{
 				"linux"
@@ -134,23 +89,6 @@
 
 		"Signatures"
 		{
-			/* CBaseServer::ProcessConnectionlessPacket(CBaseServer *, netadr_s *) */
-			"CBaseServer::ProcessConnectionlessPacket"
-			{
-				"library"	"engine"
-				"linux"		"@_ZN11CBaseServer27ProcessConnectionlessPacketEP11netpacket_s"
-				"windows"	"\x55\x8B\xEC\x81\xEC\x58\x0A\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x08"
-				/* 55 8B EC 81 EC 58 0A 00 00 A1 ? ? ? ? 33 C5 89 45 FC 8B 45 08 */
-			}
-
-			/* CMaster::RebuildInfo(CBaseServer *) */
-			"CMaster::RebuildInfo"
-			{
-				"library"	"engine"
-				"linux"		"@_ZN7CMaster11RebuildInfoEP11CBaseServer"
-				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\xF3\x0F\x10\x05\x2A\x2A\x2A\x2A\x56\x8B\xF1\x57\x8B\x7D\x08\x8D\x8E"
-			}
-
 			/* GetGameDescription(void) */
 			"GetGameDescription"
 			{
@@ -182,6 +120,21 @@
 				"linux"		"@_ZN16CTerrorGameRules14GetMissionInfoEv"
 				"windows"	"\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x8B\x2A\x8B\x2A\x2A\x56\xFF\x2A\x8B\x2A\x8B\x2A\x8B\x2A\x2A\x6A\x2A\xFF\x2A\x8B\x2A\x85\x2A\x75\x2A\x5E"
 				/* ? ? ? ? ? ? ? ? ? ? 8B ? 8B ? ? 56 FF ? 8B ? 8B ? 8B ? ? 6A ? FF ? 8B ? 85 ? 75 ? 5E */
+			}
+			
+			"GetSteam3Server"
+			{
+				"library"	"engine"
+				"linux"		"@_Z12Steam3Serverv"
+				"windows"	"\xB8\x2A\x2A\x2A\x2A\xC3\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xFF\x15\x2A\x2A\x2A\x2A\xC3"
+			}
+			
+			"SendUpdatedServerDetails" // ss_disconnect %d\n
+			{
+				"library"	"engine"
+				"linux"		"@_ZN13CSteam3Server24SendUpdatedServerDetailsEv.part.27"
+				"windows"	"\x55\x8B\xEC\x81\xEC\x14\x01\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x56\x8B\xF1"
+				/* 55 8B EC 81 EC 14 01 00 00 A1 ? ? ? ? 33 C5 89 45 FC 56 8B F1  */
 			}
 		}
 	}
