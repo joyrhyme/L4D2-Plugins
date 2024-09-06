@@ -1,0 +1,37 @@
+"Games"
+{
+	"left4dead2"
+	{
+		"MemPatches"
+		{
+			"block_expert:witch_allow_kill"
+			{
+				"signature"		"CTerrorPlayer::AllowDamage"
+
+				"linux"
+				{
+					"offset"	"C7h"
+					"verify"	"\xE8\xD4\x83\xB6\xFF\x83\xF8\x03\x0F\x84\x1B\x02\x00\x00"
+					"patch"		"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+				}
+				"windows"
+				{
+					"offset"	"125h"
+					"verify"	"\xE8\xD6\xDE\x01\x00\x83\xF8\x03\x74\x14"
+					"patch"		"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"
+				}
+			}
+		}
+
+		// Signature scanning
+		"Signatures"
+		{
+			"CTerrorPlayer::AllowDamage"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer11AllowDamageERK15CTakeDamageInfo"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x08\x56\x8B\xF1\x8B\x06\x8B\x90\x28\x01\x00\x00\xFF\xD2\x84\xC0\x75\x2A"
+			}
+		}
+	}
+}
